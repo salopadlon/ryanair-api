@@ -6,7 +6,7 @@ Run this command to install all required packages
 
 ## Run application
 
-To run the application use the following command
+To run the application use the following command from the directory of `main.py`
 
 
 `uvicorn main:app --reload`
