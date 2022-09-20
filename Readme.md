@@ -1,5 +1,7 @@
 ## Install dependencies
 
+The project uses Python 3.8
+
 Run this command to install all required packages
 
 `pip install -r requirements.txt`
