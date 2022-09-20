@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flights prices</title>
+</head>
+<body>
+    <form id="searchForm" action="/search-prices" method="post" >
+        <datalist id="airports">
+            {% for airport in airports %}
+                <option>{{ airport }}</option>
+            {% endfor %}
+        </datalist>
+
+        <label for="airport-from">Select origin</label>
+        <input id="airport-from" name="airport_from" type="text" list="airports"><br>
+        <label for="airport-to">Select destination</label>
+        <input id="airport-to" name="airport_to" type="text" list="airports"><br>
+        <label for="date-from">Select time period from</label>
+        <input id="date-from" name="date_from" type="date"><br>
+        <label for="date-to">Select time period to</label>
+        <input id="date-to" name="date_to" type="date"><br>
+        <input id="submit" type="submit" value="Search">
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        searchForm.onsubmit = async (e) => {
+          e.preventDefault();
+
+          let res = await fetch("/search-prices", {
+            method: "POST",
+            body: new FormData(searchForm),
+          });
+
+          let data = await res.json();
+          data = JSON.stringify(data);
+          data = JSON.parse(data);
+
+          if (data.show_graph) {
+              deleteExistingGraph()
+              document.getElementById("result").appendChild(createNewGraph(data));
+          } else {
+              document.getElementById("result").innerHTML = "<p>Please select valid flight</p>";
+          }
+          document.getElementById("result").contentWindow.location.reload();
+        };
+
+        function deleteExistingGraph() {
+            let graph_element = document.getElementById("graph");
+            if (graph_element) {
+              graph_element.remove();
+            }
+        }
+
+        function createNewGraph(data) {
+            let img = document.createElement('img');
+            img.src = data.image_path;
+            img.id = "graph";
+            return img;
+        }
+    </script>
+</body>
+</html>
