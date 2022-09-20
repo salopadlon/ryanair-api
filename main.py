@@ -82,19 +82,23 @@ def get_fares(dates_list: list, airport_from: str, airport_to: str):
 def create_graph(fares_dict: dict) -> list:
     x = list(fares_dict.keys())
     y = list(fares_dict.values())
+    counter = 0
+    for element in y:
+        counter += len(element)
 
     fig, ax = plt.subplots()
 
     if len(x) < 1 or len(y) < 1:
         return [0, ""]
-    elif [len(element) > 1 for element in y]:
+    elif counter > len(y):
         y_min = [min(element) for element in y]
         y_max = [max(element) for element in y]
         y_avg = [average(element) for element in y]
         plt.clf()
         plt.plot(x, y_min)
-        plt.plot(x, y_max)
         plt.plot(x, y_avg)
+        plt.plot(x, y_max)
+        plt.legend(['Min price', 'Avg price', 'Max price'])
     else:
         plt.clf()
         plt.plot(x, y)
