@@ -6,6 +6,11 @@ Run this command to install all required packages
 
 `pip install -r requirements.txt`
 
+During testing in completely new environment I encountered problem with package `python-multipart`.
+In case of error with this package, install it with:
+
+`pip install python-multipart`
+
 ## Run application
 
 To run the application use the following command from the directory of `main.py`
