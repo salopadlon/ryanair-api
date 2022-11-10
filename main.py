@@ -7,19 +7,19 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="templates")
+TEMPLATES = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/")
 async def root(request: Request) -> Jinja2Templates.TemplateResponse:
     airports = get_airports()
-    return templates.TemplateResponse('index.html',
+    return TEMPLATES.TemplateResponse('index.html',
                                       {"request": request, "airports": airports})
 
 
 @app.post("/search-prices")
-async def search(request: Request):
+async def search(request: Request) -> dict:
     data = {}
 
     try:
@@ -30,7 +30,9 @@ async def search(request: Request):
     code_from = get_code_from_name(data["airport_from"])
     code_to = get_code_from_name(data["airport_to"])
 
+    # not used right now
     # airports_to = get_connections_from_airport(get_code_from_name(data["airport_from"]))
+
     dates_list = get_dates(code_from, code_to, datetime.strptime(data["date_from"], "%Y-%m-%d"),
                            datetime.strptime(data["date_to"], "%Y-%m-%d"))
     fares_dict = get_fares(dates_list, code_from, code_to)
@@ -46,7 +48,7 @@ def get_airports() -> list:
     return airports_list
 
 
-def get_connections_from_airport(airport: str):
+def get_connections_from_airport(airport: str) -> dict:
     response = requests.get(
         f"https://www.ryanair.com/api/locate/v1/autocomplete/routes?arrivalPhrase&departurePhrase={airport}"
         f"&market=en-gb")
@@ -64,7 +66,7 @@ def get_dates(airport_from: str, airport_to: str, date_from: datetime, date_to: 
     return date_list
 
 
-def get_fares(dates_list: list, airport_from: str, airport_to: str):
+def get_fares(dates_list: list, airport_from: str, airport_to: str) -> dict:
     fares_dict = {}
     for date in dates_list:
         response = requests.get(
